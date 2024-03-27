@@ -22,9 +22,9 @@ export async function verifyPassword(
 
 export async function updatePassword(
   userId: string,
-  newPassword: string
+  password: string
 ): Promise<void> {
-  const hashedPassword = await bcrypt.hash(newPassword, 12);
+  const hashedPassword = await bcrypt.hash(password, 12);
   await db.user.update({
     where: { id: userId },
     data: { password: hashedPassword },

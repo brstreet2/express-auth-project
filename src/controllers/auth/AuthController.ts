@@ -73,7 +73,7 @@ export async function forgotPassword(req: Request, res: Response) {
 }
 
 export async function resetPassword(req: Request, res: Response) {
-  const { token, newPassword } = req.body;
+  const { token, password } = req.body;
   try {
     const userId = validateResetToken(token);
 
@@ -81,7 +81,7 @@ export async function resetPassword(req: Request, res: Response) {
       return res.status(400).json({ message: "Invalid or expired token" });
     }
 
-    await updatePassword(userId, newPassword);
+    await updatePassword(userId, password);
 
     res
       .status(200)
