@@ -5,12 +5,18 @@ import {
   register,
   resetPassword,
 } from "../../controllers/auth/AuthController";
+import {
+  validateForgotPasswordBody,
+  validateLoginBody,
+  validateRegisterBody,
+  validateResetPasswordBody,
+} from "../../middleware/validation/auth/AuthValidationMiddleware";
 
 const router = express.Router();
 
-router.post("/register", register);
-router.post("/login", login);
-router.post("/forgot-password", forgotPassword);
-router.post("/reset-password", resetPassword);
+router.post("/register", validateRegisterBody, register);
+router.post("/login", validateLoginBody, login);
+router.post("/forgot-password", validateForgotPasswordBody, forgotPassword);
+router.post("/reset-password", validateResetPasswordBody, resetPassword);
 
 export default router;
