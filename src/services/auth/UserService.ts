@@ -1,32 +1,56 @@
-import bcrypt from "bcryptjs";
+import { Roles } from "@prisma/client";
 import { db } from "../../utils/db";
+import bcrypt from "bcryptjs";
 
 export async function createUser(
   email: string,
-  password: string
+  password: string,
+  role: Roles,
+  createdBy: string
 ): Promise<void> {
   const hashedPassword = await bcrypt.hash(password, 12);
-  await db.user.create({ data: { email, password: hashedPassword } });
+  await db.user.create({
+    data: {
+      email,
+      password: hashedPassword,
+      role,
+      createdBy,
+    },
+  });
 }
 
-export async function findUserByEmail(email: string): Promise<any | null> {
-  return db.user.findUnique({ where: { email: email } });
+export async function getAllUsers(): Promise<any | null> {
+  return db.user.findMany({
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      role: true,
+    },
+  });
 }
 
-export async function verifyPassword(
-  plainPassword: string,
-  hashedPassword: string
-): Promise<boolean> {
-  return bcrypt.compare(plainPassword, hashedPassword);
+export async function getUserById(id: string): Promise<any | null> {
+  return db.user.findFirst({
+    where: { id: id },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      role: true,
+    },
+  });
 }
 
-export async function updatePassword(
-  userId: string,
-  password: string
-): Promise<void> {
-  const hashedPassword = await bcrypt.hash(password, 12);
-  await db.user.update({
-    where: { id: userId },
-    data: { password: hashedPassword },
+export async function getUserByEmail(email: string): Promise<any | null> {
+  return db.user.findUnique({
+    where: { email: email },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      role: true,
+      password: true,
+    },
   });
 }

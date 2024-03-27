@@ -5,7 +5,7 @@ export function validateRegisterBody(
   res: Response,
   next: NextFunction
 ) {
-  const { email, password, fullName } = req.body;
+  const { email, password, name } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required." });
@@ -24,14 +24,14 @@ export function validateRegisterBody(
       .json({ error: "Password must be at least 6 characters long." });
   }
 
-  // Validate optional fullName field if provided
-  if (fullName) {
-    if (typeof fullName !== "string") {
+  // Validate optional name field if provided
+  if (name) {
+    if (typeof name !== "string") {
       return res.status(400).json({ error: "Full name must be a string" });
     }
     // Regular expression to validate full name format (allowing letters, spaces, and hyphens)
-    const fullNameRegex = /^[a-zA-Z]+(?:\s+[a-zA-Z]+)*$/;
-    if (!fullNameRegex.test(fullName)) {
+    const nameRegex = /^[a-zA-Z]+(?:\s+[a-zA-Z]+)*$/;
+    if (!nameRegex.test(name)) {
       return res.status(400).json({ error: "Invalid full name format" });
     }
   }

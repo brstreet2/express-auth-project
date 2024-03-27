@@ -1,25 +1,25 @@
 import { Request, Response } from "express";
-import {
-  createUser,
-  findUserByEmail,
-  updatePassword,
-  verifyPassword,
-} from "../../services/auth/UserService";
+import { getUserByEmail } from "../../services/auth/UserService";
 import {
   generateResetToken,
   issueToken,
   validateResetToken,
 } from "../../services/auth/TokenService";
 import { sendResetEmail } from "../../services/mailer/MailerService";
+import {
+  registerUser,
+  updatePassword,
+  verifyPassword,
+} from "../../services/auth/AuthService";
 
 export async function register(req: Request, res: Response) {
   const { email, password } = req.body;
   try {
-    const user = await findUserByEmail(email);
+    const user = await getUserByEmail(email);
     if (user) {
       return res.status(400).json({ message: "Email already exists." });
     }
-    await createUser(email, password);
+    await registerUser(email, password);
     res.status(201).json({ message: "User created successfully." });
   } catch (error) {
     console.error(error);
@@ -30,7 +30,7 @@ export async function register(req: Request, res: Response) {
 export async function login(req: Request, res: Response) {
   const { email, password } = req.body;
   try {
-    const user = await findUserByEmail(email);
+    const user = await getUserByEmail(email);
     if (!user) {
       res.status(401).json({ message: "Invalid username or password." });
       return;
@@ -47,8 +47,17 @@ export async function login(req: Request, res: Response) {
     if (!token) {
       res.status(500).json({ message: "Internal server error." });
     }
-    res.status(200).json({ token });
+    res.status(200).json({
+      data: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+      token,
+    });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Internal server error." });
   }
 }
@@ -56,7 +65,7 @@ export async function login(req: Request, res: Response) {
 export async function forgotPassword(req: Request, res: Response) {
   const { email } = req.body;
   try {
-    const user = await findUserByEmail(email);
+    const user = await getUserByEmail(email);
     if (!user) {
       return res.status(404).json({ message: "Invalid email address." });
     }
