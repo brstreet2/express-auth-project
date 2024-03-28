@@ -10,7 +10,7 @@ import {
   validateLoginBody,
   validateRegisterBody,
   validateResetPasswordBody,
-} from "../../middleware/validation/auth/AuthValidationMiddleware";
+} from "../../requests/AuthRequestValidation";
 
 const router = express.Router();
 
