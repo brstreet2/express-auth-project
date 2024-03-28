@@ -14,7 +14,7 @@ export function validateToken(token: string) {
       userId: string;
     };
 
-    return decodedToken.userId;
+    return decodedToken;
   } catch (error) {
     console.log("" + error);
   }
