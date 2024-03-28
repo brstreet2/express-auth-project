@@ -1,18 +1,23 @@
 import express from "express";
 import { validateRegisterBody } from "../../../middleware/validation/auth/AuthValidationMiddleware";
-import {
-  authenticate,
-  requireRole,
-} from "../../../middleware/validation/auth/AuthMiddleware";
-import { create } from "../../../controllers/auth/user/UserController";
+import { authenticate, requireRole } from "../../../middleware/AuthMiddleware";
+import { create, get } from "../../../controllers/auth/user/UserController";
+import { Roles } from "@prisma/client";
 
 const router = express.Router();
+
+router.get(
+  "/get/:id",
+  authenticate,
+  requireRole(Roles.ADMIN || Roles.SUPER_ADMIN),
+  get
+);
 
 router.post(
   "/create",
   validateRegisterBody,
   authenticate,
-  requireRole("ADMIN" || "SUPER_ADMIN"),
+  requireRole(Roles.ADMIN || Roles.SUPER_ADMIN),
   create
 );
 
